@@ -1,0 +1,57 @@
+﻿@model MDisasaterDampener.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Disasater Dampener Registration";
+}
+
+
+
+
+
+<div class="register_container">
+    <div class="left">
+        <h3>MDD Registration</h3>
+        <form asp-action="Login">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="firstName" class="register_lable">First Name</label>
+                <input asp-for="firstName" class="register_input" />
+                <span asp-validation-for="firstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="lastName" class="register_lable">Last Name</label>
+                <input asp-for="lastName" class="register_input" />
+                <span asp-validation-for="lastName" class="text-danger"></span>
+            </div><div class="form-group">
+                <label asp-for="username" class="register_lable"></label>
+                <input asp-for="username" class="register_input" />
+                <span asp-validation-for="username" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="email" class="register_lable"></label>
+                <input asp-for="email" class="register_input" inputmode="email" type="email" />
+                <span asp-validation-for="email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="password" class="register_lable"></label>
+                <input asp-for="password" class="register_input" type="password" />
+                <span asp-validation-for="password" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="confirmPassword" class="register_lable">Confirm password</label>
+                <input asp-for="confirmPassword" class="register_input" type="password"/>
+                <span asp-validation-for="confirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Register" class="register_button" />
+            </div>
+        </form>
+    </div>
+    <div class="right">
+
+    
+    </div>
+</div>
+
+
+
