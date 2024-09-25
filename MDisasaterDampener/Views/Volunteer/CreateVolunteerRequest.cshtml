@@ -1,0 +1,63 @@
+﻿@model MDisasaterDampener.Models.RequestViewModel
+
+@{
+    ViewData["Title"] = "CreateVolunteerRequest";
+}
+
+<h1>Create Volunteer Request</h1>
+
+
+<hr />
+<div class="request_form_container">
+    <div class="request_form">
+        <form asp-action="ProcessVolunteerRequest">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="volunteerRequest.NumVolunteers" class="request_lable"></label>
+                        <input asp-for="volunteerRequest.NumVolunteers" type="number" class="request_input" />
+                        <span asp-validation-for="volunteerRequest.NumVolunteers" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="volunteerRequest.Date" class="request_lable"></label>
+                        <input asp-for="volunteerRequest.Date" class="request_input" type="date" />
+                        <span asp-validation-for="volunteerRequest.Date" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label asp-for="volunteerRequest.Description" class="request_lable"></label>
+                <textarea asp-for="volunteerRequest.Description" class="request_input"></textarea>
+
+                <span asp-validation-for="volunteerRequest.Description" class="text-danger"></span>
+            </div>
+         
+            
+            <div class="input-field">
+                <label asp-for="volunteerRequest.Rid" class="request_lable">Select Relief Effort</label>
+                @{
+                    var reliefEfforts = Model.reliefEfforts?.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Title.ToString() }) ?? new List<SelectListItem>();
+                }
+
+                @Html.DropDownListFor(
+                         model => model.volunteerRequest.Rid, reliefEfforts,
+                         "Select a Relief Effort",
+                         new { @class = "request_input" }
+                         )
+
+                <span asp-validation-for="volunteerRequest.Rid" id="text_danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="request_create_btn" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+

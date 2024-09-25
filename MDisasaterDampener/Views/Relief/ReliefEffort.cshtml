@@ -1,0 +1,49 @@
+﻿@model MDisasaterDampener.Models.ReliefViewModel
+
+@{
+    ViewData["Title"] = "Relief Effort";
+}
+
+<h1>Relief Effort</h1>
+
+<div class="relief_container">
+<p>
+        <a asp-action="CreateNewReliefEffort" asp-controller="Relief" class="relief_user_btn">Create New Relief Effort</a>
+</p>
+
+</div>
+
+
+
+    <div class="table_container">
+        <table id="bug" class="table table-bordered">
+            <thead>
+                <tr id="table-header">
+                    <th id="col col-2">Active Relief Efforts</th>
+                
+                </tr>
+            </thead>
+            <tbody>
+            @if (Model.reliefEfforts != null && Model.reliefEfforts.Any())
+            { 
+              
+                  @foreach (var relief in Model.reliefEfforts){
+                
+                    <tr id="table-row">
+                        <td class="table_collum">
+                            <h2> @relief.Title</h2>
+                            <p>@relief.Description</p>
+                           </td>
+                    </tr>
+                         
+                }
+            }
+else
+{
+    <p>No bug tickets found.</p>
+}
+            </tbody>
+        </table>
+    </div>
+
+        </div> 

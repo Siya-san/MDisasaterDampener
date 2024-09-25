@@ -1,0 +1,59 @@
+﻿@model MDisasaterDampener.Models.UserViewModel
+
+@{
+    ViewData["Title"] = "Account mangement";
+}
+<h1>Manage account</h1>
+<div class="managment_body">
+
+    <div class="management_container">
+        <div class="card">
+            <h3>Change Username</h3>
+            <form asp-action="ProcessChangeUsername">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                   
+                    <label asp-for="username" class="login_lable">Enter New Username</label>
+                    <input asp-for="username" class="login_input" id="NewUsername"/>
+                    <span asp-validation-for="username" class="text-danger"></span>
+                </div>
+                <div class="form-group">
+                    <input type="submit" value="Login" class="login_button" />
+                </div>
+            </form>
+        </div>
+        <div class="card">
+            <h3>Change Email</h3>
+            <form asp-action="ProcessChangeEmail">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="email" class="login_lable"></label>
+                    <input asp-for="email" class="login_input" id="newEmail"/>
+                    <span asp-validation-for="email" class="text-danger"></span>
+                </div>
+              
+                <div class="form-group">
+                    <input type="submit" value="Login" class="login_button" />
+                </div>
+            </form>
+        </div>
+        <div class="card">
+            <h3>Change password</h3>
+            <form asp-action="ProcessChangePassword">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <div class="form-group">
+                    <label asp-for="password" class="login_lable"></label>
+                    <input asp-for="password" class="login_input" id="newPassword" />
+                    <span asp-validation-for="password" class="text-danger"></span>
+                </div>
+            
+                <div class="form-group">
+                    <input type="submit" value="Login" class="login_button" />
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

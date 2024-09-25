@@ -123,6 +123,69 @@ namespace MDisasaterDampener.Services
 
 
             }
+
+        }
+        public void ChangeUsername(UserViewModel User, int Id)
+        {
+
+            var configuration = new ConfigurationBuilder()
+           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+           .Build();
+
+            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE USERS SET Username = @Username WHERE Id = @Id";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", Id);
+                    command.Parameters.AddWithValue("@password", EncryptPassword(User.password));
+                    command.Parameters.AddWithValue("@defaultPw", false);
+                    command.ExecuteNonQuery();
+                }
+            }
+        }
+        public void ChangeEmail( UserViewModel User, int Id)
+        {
+
+            var configuration = new ConfigurationBuilder()
+           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+           .Build();
+
+            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE USERS SET Email = @Email WHERE Id = @Id";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", Id);
+                    command.Parameters.AddWithValue("@Email", EncryptPassword(User.password));
+                  
+                    command.ExecuteNonQuery();
+                }
+            }
+        } public void ChangePassword(UserViewModel User, int Id)
+        {
+
+            var configuration = new ConfigurationBuilder()
+           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+           .Build();
+
+            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            using (SqlConnection connection = new SqlConnection(connectionString))
+            {
+                connection.Open();
+                string query = "UPDATE USERS SET Password = @Password WHERE Id = @Id";
+                using (SqlCommand command = new SqlCommand(query, connection))
+                {
+                    command.Parameters.AddWithValue("@Id", Id);
+                    command.Parameters.AddWithValue("@Password", EncryptPassword(User.password));
+                  
+                    command.ExecuteNonQuery();
+                }
+            }
         }
 
     }

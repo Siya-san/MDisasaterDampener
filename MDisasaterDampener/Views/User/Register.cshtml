@@ -1,13 +1,22 @@
 ﻿@model MDisasaterDampener.Models.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Disasater Dampener Registration";
+    Layout = null;
 }
 
+<!DOCTYPE html>
 
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewData["Title"] - Disasater Dampener Registation</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MDisasaterDampener.styles.css" asp-append-version="true" />
+</head>
+<body>
 
-
-
+<div class="register_body">
 <div class="register_container">
     <div class="left">
         <h3>MDD Registation</h3>
@@ -47,11 +56,13 @@
             </div>
         </form>
     </div>
-    <div class="right">
+            <div class="right_image">
 
     
     </div>
 </div>
 
+</div>
+</body></html>
 
 

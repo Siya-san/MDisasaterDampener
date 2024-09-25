@@ -1,12 +1,23 @@
 ﻿@model MDisasaterDampener.Models.LoginViewModel
 
+
 @{
-    ViewData["Title"] = "Disasater Dampener Login";
+    Layout = null;
 }
 
+<!DOCTYPE html>
 
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>@ViewData["Title"] - Disasater Dampener Login</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/MDisasaterDampener.styles.css" asp-append-version="true" />
+</head>
+<body>
 
-
+<div class="login_body">
 
 <div class="login_container">
     <div class="left">
@@ -35,10 +46,13 @@
             </div>
         </form>
     </div>
-    <div class="right">
+            <div class="right_image">
         
     </div>
+</div>
 </div>
 
 
 
+</body>
+</html>
