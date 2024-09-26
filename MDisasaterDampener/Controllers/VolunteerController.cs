@@ -1,6 +1,8 @@
 ﻿using MDisasaterDampener.Models;
 using MDisasaterDampener.Services;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace MDisasaterDampener.Controllers
 {
@@ -11,8 +13,15 @@ namespace MDisasaterDampener.Controllers
         ReliefServices reliefServices = new ReliefServices();
         public IActionResult VolunteerCenter()
         {
-            return View();
-        }public IActionResult CreateVolunteerRequest()
+            var volunteerRequest = new RequestViewModel
+            {
+                volunteerRequests = volunteerServices.ReadRequest()
+
+            };
+
+            return View(volunteerRequest);
+        }
+        public IActionResult CreateVolunteerRequest()
         {
             var requestModel = new RequestViewModel()
             {
@@ -23,9 +32,30 @@ namespace MDisasaterDampener.Controllers
 
             return View(requestModel);
         }
-        public IActionResult ProcessVolunteerRequest()
+        public IActionResult ProcessVolunteerRequest(VolunteerRequestViewModel volunteerRequest)
         {
-            return View();
+            if (volunteerRequest != null)
+                volunteerServices.CreateRequest(volunteerRequest);
+            else
+                return View("CreateVolunteerRequest");
+            return RedirectToAction("VolunteerCenter", "Volunteer");
         }
+        public IActionResult ProcessVolunteer(int id)
+        {
+            UserViewModel user = new UserViewModel();
+            if (HttpContext.Session.TryGetValue("Current_User", out var userDataBytes))
+            {
+                string userDataJson = Encoding.UTF8.GetString(userDataBytes);
+                user = JsonConvert.DeserializeObject<UserViewModel>(userDataJson);
+            }
+            if (user != null && id > 0)
+            {
+                volunteerServices.CreateVolunteer(user.id, id);
+                volunteerServices.UpdateNumberVolunteers(id);
+            }
+
+                return View("VolunteerCenter");
+        }
+
     }
 }

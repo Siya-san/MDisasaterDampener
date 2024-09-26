@@ -1,5 +1,4 @@
-﻿
-@model MDisasaterDampener.Models.VolunteerRequestViewModel
+﻿@model MDisasaterDampener.Models.RequestViewModel
 @{
     ViewData["Title"] = "Volunteer Center";
 }
@@ -10,4 +9,49 @@
         <a asp-action="CreateVolunteerRequest" asp-controller="Volunteer" class="volunteer_req_btn">Create Volunteer Request</a>
     </p>
 
+</div>
+<div class="table_container">
+    <table>
+        <thead>
+            <tr class="table_header">
+                <th>Active Relief Efforts to Volunteer </th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.volunteerRequests != null && Model.volunteerRequests.Any())
+            {
+
+                @foreach (var request in Model.volunteerRequests)
+                {
+
+                    <tr class="table_row">
+                        <td class="table_column">
+                            <h2>Relief Effort: @request.Rid.Title</h2>
+                            <p><h5>Number of volunteers needed :@request.Number_Volunteers</h5></p>
+                            <p><h5>Date : @request.Date.ToString()</h5></p>
+                            <p><h5>@request.Description</h5></p>
+                        </td>
+                    </tr>
+                    <tr class="table_header">
+                        <td>
+                             <a asp-action="ProcessVolunteer" asp-controller="Volunteer" asp-route-id="@request.Id" class="volunteer_req_btn" >Volunteer to help</a>
+                                      
+                        </td>
+                    </tr>
+
+                }
+            }
+            else
+            {
+                <tr>
+                    <td>
+                        <h2>Sorry there are no active relief efforts to Volunteer to</h2>
+                    </td>
+                   
+                </tr>
+      
+            }
+        </tbody>
+    </table>
 </div>

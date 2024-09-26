@@ -1,7 +1,7 @@
 ﻿@model MDisasaterDampener.Models.RequestViewModel
 
 @{
-    ViewData["Title"] = "CreateVolunteerRequest";
+    ViewData["Title"] = "Create Volunteer Request";
 }
 
 <h1>Create Volunteer Request</h1>
@@ -15,14 +15,14 @@
             <div class="row">
                 <div class="col">
                     <div class="form-group">
-                        <label asp-for="volunteerRequest.NumVolunteers" class="request_lable"></label>
-                        <input asp-for="volunteerRequest.NumVolunteers" type="number" class="request_input" />
-                        <span asp-validation-for="volunteerRequest.NumVolunteers" class="text-danger"></span>
+                        <label asp-for="volunteerRequest.Number_Volunteers" class="request_lable">Number of Volunteers</label>
+                        <input asp-for="volunteerRequest.Number_Volunteers" type="number" class="request_input" />
+                        <span asp-validation-for="volunteerRequest.Number_Volunteers" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col">
                     <div class="form-group">
-                        <label asp-for="volunteerRequest.Date" class="request_lable"></label>
+                        <label asp-for="volunteerRequest.Date" class="request_lable">Date</label>
                         <input asp-for="volunteerRequest.Date" class="request_input" type="date" />
                         <span asp-validation-for="volunteerRequest.Date" class="text-danger"></span>
                     </div>
@@ -43,7 +43,7 @@
                 }
 
                 @Html.DropDownListFor(
-                         model => model.volunteerRequest.Rid, reliefEfforts,
+                         model => model.volunteerRequest.Rid.Id, reliefEfforts,
                          "Select a Relief Effort",
                          new { @class = "request_input" }
                          )

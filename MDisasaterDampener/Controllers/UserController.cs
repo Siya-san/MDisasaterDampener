@@ -1,6 +1,8 @@
 ﻿using MDisasaterDampener.Models;
 using MDisasaterDampener.Services;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 
 namespace MDisasaterDampener.Controllers
 {
@@ -22,8 +24,9 @@ namespace MDisasaterDampener.Controllers
             UserViewModel user = new UserViewModel();
             if (userServices.Login(returningUser) != null)
             {
-                HttpContext.Session.SetString("ID", returningUser.id.ToString());
-                HttpContext.Session.SetString("Username",returningUser.username );
+                
+                HttpContext.Session.SetString("Current_User", JsonConvert.SerializeObject(userServices.Login(returningUser)));
+            
      
                 return RedirectToAction("Index", "Home");
             }

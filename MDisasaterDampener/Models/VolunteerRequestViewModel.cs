@@ -4,14 +4,16 @@
     {
        
         public int Id { get; set; }
-        public int NumVolunteers { get; set; }
+        public int Number_Volunteers { get; set; }
         public DateOnly Date { get; set; }
         public string? Description { get; set; }
         public ReliefEffortViewModel Rid { get; set; }
 
         public VolunteerRequestViewModel()
         {
-            Description = "Job description icluding the time and location where the volunteers are required";
+            Number_Volunteers = 1;
+            Date = DateOnly.FromDateTime(DateTime.Now);
+            Description = "Please indclude the job description, the time and location";
             Rid=new ReliefEffortViewModel();
         }
 
