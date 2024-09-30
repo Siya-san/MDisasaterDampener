@@ -1,0 +1,103 @@
+﻿@model MDisasaterDampener.Models.FoodDonationViewModel
+
+@{
+    ViewData["Title"] = "Donate Food";
+}
+
+<h1>Donate Food</h1>
+
+<div class="donation_container">
+    <p>
+        <a asp-action="GetAllFoodDonations" asp-controller="Donation" class="donate_btn">View All Food</a>
+    </p>
+
+</div>
+<div class="donation_container">
+    <div class="donation_form">
+        <form asp-action="CreateFoodDonation">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+
+
+                        <label asp-for="Category" class="donation_lable"></label>
+
+                        @foreach (var categories in Enum.GetValues(typeof(FoodDonationViewModel.Categories)))
+                        {
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" asp-for="Category" value="@categories" id="Category">
+                                <label class="form-check-label" for="Category">@categories</label>
+                                <span asp-validation-for="Category" class="text-danger"></span>
+                            </div>
+                        }
+                   
+           
+                        
+
+                    </div>
+                </div>
+            <div class="col">
+                <div class="form-group">
+                    <label asp-for="Item_Name" class="donation_lable">Item Name</label>
+                    <input asp-for="Item_Name" class="donation_input" />
+                    <span asp-validation-for="Item_Name" class="text-danger"></span>
+                  </div>
+             </div>
+            </div>
+                
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Description_and_inner_units" class="donation_lable">Description and inner units</label>
+                        <textarea asp-for="Description_and_inner_units" class="donation_input"></textarea>
+                        <span asp-validation-for="Description_and_inner_units" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                      <div class="row">
+                    <div class="form-group">
+                        <label asp-for="Weight" class="donation_lable">Weight</label>
+                        <input asp-for="Weight" class="donation_input" />
+                        <span asp-validation-for="Weight" class="text-danger"></span>
+                    </div>
+                      <div class="row">
+                    <div class="form-group">
+                            <label asp-for="Expiry" class="donation_lable">Expiry</label>
+                            <input asp-for="Expiry" class="donation_input" type="date" />
+                            <span asp-validation-for="Expiry" class="text-danger"></span>
+                    </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+
+                        <label asp-for="RE_Id" class="request_lable">Select Relief Effort</label>
+                        @{
+                            var reliefEfforts = Model.reliefEfforts?.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Title.ToString() }) ?? new List<SelectListItem>();
+                        }
+
+                        @Html.DropDownListFor(
+                                 model => model.RE_Id.Id, reliefEfforts,
+                                 "Select a Relief Effort",
+                                 new { @class = "request_input" }
+                                 )
+
+                        <span asp-validation-for="RE_Id" id="text_danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <input type="submit" value="Process" class="donate_btn" />
+                    </div>
+                </div>
+               </div>
+     </form>
+    </div>
+</div>
+
+
+

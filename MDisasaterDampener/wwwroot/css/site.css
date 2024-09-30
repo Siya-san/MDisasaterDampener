@@ -67,14 +67,14 @@ body {
     height: 550px;
 
 }
-.login_lable, .register_lable, .relief_lable,.request_lable {
+.login_lable, .register_lable, .relief_lable, .request_lable, .donation_lable {
     text-align: center;
     padding: 10px;
     width: 100%;
     margin: 5px;
     text-transform: uppercase;
 }
-.login_input, .register_input, .relief_input, .request_input {
+.login_input, .register_input, .relief_input, .request_input, .donation_input {
     margin: 5px;
     padding: 2px 5px;
     color: #254336;
@@ -124,7 +124,7 @@ nav{
   
     height: auto;
 }
-.relief_container, .volunteer_container {
+.relief_container, .volunteer_container, .donation_container {
     display: flex;
     height: auto;
     border: 2px solid #254336;
@@ -132,7 +132,7 @@ nav{
     margin: 25px;
     border-radius: 20px 10px;
 }
-.relief_user_btn, .volunteer_req_btn {
+.relief_user_btn, .volunteer_req_btn ,.donate_btn{
     border: solid 2.5px rgb(37,67,54);
     background-color: rgb(107,138,122);
     padding: 5px 10px;
@@ -153,7 +153,7 @@ nav{
     margin: 25px;
     border-radius: 20px 10px;
 }
-.relief_form, .request_form {
+.relief_form, .request_form, .donation_form {
     width: 100%;
     margin: 25px;
 }

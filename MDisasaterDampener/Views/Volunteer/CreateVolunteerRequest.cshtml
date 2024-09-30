@@ -36,7 +36,7 @@
             </div>
          
             
-            <div class="input-field">
+            <div class="form-group">
                 <label asp-for="volunteerRequest.Rid" class="request_lable">Select Relief Effort</label>
                 @{
                     var reliefEfforts = Model.reliefEfforts?.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Title.ToString() }) ?? new List<SelectListItem>();

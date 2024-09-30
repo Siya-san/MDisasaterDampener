@@ -1,0 +1,81 @@
+﻿@model MDisasaterDampener.Models.ClothingDonationViewModel
+
+@{
+    ViewData["Title"] = "Donate Clothing";
+}
+
+<h1>Donate Clothing</h1>
+
+<div class="donation_container">
+    <p>
+        <a asp-action="GetAllClothingDonations" asp-controller="Donation" class="donate_btn">View All Clothing</a>
+    </p>
+
+</div>
+<div class="donation_container">
+    <div class="donation_form">
+        <form asp-action="CreateClothingDonation">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Quantity" class="donation_lable">Weight</label>
+                        <input asp-for="Quantity" class="donation_input" />
+                        <span asp-validation-for="Quantity" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Material" class="donation_lable">Item Name</label>
+                        <input asp-for="Material" class="donation_input" />
+                        <span asp-validation-for="Material" class="text-danger"></span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <div class="form-group">
+                        <label asp-for="Item_Description" class="donation_lable">Item Description</label>
+                        <textarea asp-for="Item_Description" class="donation_input"></textarea>
+                        <span asp-validation-for="Item_Description" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="col">
+                 
+                      
+                        
+                    
+
+                </div>
+                </div>
+                <div class="row">
+                    <div class="col">
+                        <div class="form-group">
+
+                            <label asp-for="RE_Id" class="request_lable">Select Relief Effort</label>
+                            @{
+                                var reliefEfforts = Model.reliefEfforts?.Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Title.ToString() }) ?? new List<SelectListItem>();
+                            }
+
+                            @Html.DropDownListFor(
+                                     model => model.RE_Id.Id, reliefEfforts,
+                                     "Select a Relief Effort",
+                                     new { @class = "request_input" }
+                                     )
+
+                            <span asp-validation-for="RE_Id" id="text_danger"></span>
+                        </div>
+                    </div>
+                    <div class="col">
+                        <div class="form-group">
+                            <input type="submit" value="Process" class="donate_btn" />
+                        </div>
+                    </div>
+                </div>
+        </form>
+    </div>
+</div>
+
+
+

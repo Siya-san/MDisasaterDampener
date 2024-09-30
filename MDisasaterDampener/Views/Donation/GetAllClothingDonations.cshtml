@@ -1,0 +1,62 @@
+﻿@model MDisasaterDampener.Models.ClothingDonationViewModel
+
+@{
+    ViewData["Title"] = "All Clothing Donations";
+}
+
+<h1>All Clothing Donations</h1>
+<div class="table_container">
+    <table>
+        <thead>
+            <tr class="table_header">
+                <th>Item_Description</th>
+                <th>Quantity</th>
+                <th>Material</th>
+              
+                <th>Relief Efforts</th>
+                <th>Donation Date</th>
+
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.donations != null && Model.donations.Any())
+            {
+
+                @foreach (var fd in Model.donations)
+                {
+
+                    <tr class="table_row">
+                        
+                        <td class="table_column">
+                            @fd.Item_Description
+                        </td>
+                        <td class="table_column">
+                            @fd.Quantity
+                        </td>
+                        <td class="table_column">
+                            @fd.Material
+                        </td>
+                       
+                        <td class="table_column">
+                            @fd.RE_Id.Title
+                        </td>
+                        <td class="table_column">
+                            @fd.Donation_Date
+                        </td>
+                    </tr>
+
+                }
+            }
+            else
+            {<tr>
+                <td>
+                        <h2>Sorry there are no Clothing Donations</h2>
+
+                </td>
+            </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
