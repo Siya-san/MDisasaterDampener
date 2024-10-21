@@ -7,7 +7,7 @@ trigger:
 - master
 
 pool:
-  name: 'MDD Pipe'
+  name: 'Azure Pipelines'
 
 
 variables:
