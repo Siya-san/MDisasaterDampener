@@ -10,7 +10,7 @@ trigger:
 
 
 pool:
-  vmImage: 'windows-lastest'
+  name: 'Azure Pipelines'
 
 
 variables:
