@@ -191,7 +191,13 @@ table {
     margin:5px 7px;
   
 }
-thead {
-   
-
+.home_container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto;
+    border: 2px solid #254336;
+    background-color: #B7B597;
+    margin: 25px;
+    border-radius: 20px 10px;
 }

@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IDatabaseServices, DatabaseServices>();
 builder.Services.AddScoped<IDonationServices, DonationServices>();
 builder.Services.AddScoped<IReliefServices, ReliefServices>();
 builder.Services.AddScoped<IVolunteerServices, VolunteerServices>();
