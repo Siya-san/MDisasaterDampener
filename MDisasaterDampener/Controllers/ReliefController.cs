@@ -6,18 +6,18 @@ namespace MDisasaterDampener.Controllers
 {
     public class ReliefController : Controller
     {
-       ReliefServices reliefServices = new ReliefServices();
+        private readonly ReliefServices reliefServices = new();
         public IActionResult ReliefEffort()
         {
-            var viewModel = new ReliefViewModel
+            ReliefViewModel viewModel = new()
             {
                 reliefEfforts = reliefServices.Read()
-              
+
             };
 
             return View(viewModel);
-         
-        }  
+
+        }
         public IActionResult CreateNewReliefEffort()
         {
             return View();
@@ -25,7 +25,10 @@ namespace MDisasaterDampener.Controllers
         public IActionResult ProcessCreateNewReliefEffort(ReliefEffortViewModel reliefEffort)
         {
             if (reliefEffort != null)
-              reliefServices.Insert(reliefEffort);
+            {
+                reliefServices.Insert(reliefEffort);
+            }
+
             return RedirectToAction("Index", "Home");
         }
     }

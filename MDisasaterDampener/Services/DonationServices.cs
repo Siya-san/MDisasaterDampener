@@ -1,48 +1,51 @@
 ﻿using MDisasaterDampener.Models;
+using MDisasaterDampener.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace MDisasaterDampener.Services
 {
-    public class DonationServices
+    public class DonationServices : IDonationServices
     {
+#pragma warning disable CA1305 // Specify IFormatProvider
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+
         public void CreateFoodDonation(FoodDonationViewModel foodDonation)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "INSERT INTO FOOD_DONATION (Category,  Item_Name, Description_and_inner_units, Expiry, Weight, Donation_Date, RE_Id) " +
-                               "VALUES (@Category, @Item_Name, @Description_and_inner_units, @Expiry, @Weight, @Donation_Date, @RE_Id)";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Category", foodDonation.Category);
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 
-                    command.Parameters.AddWithValue("@Item_Name", foodDonation.Item_Name);
-                    command.Parameters.AddWithValue("@Description_and_inner_units", foodDonation.Description_and_inner_units);
-                    command.Parameters.AddWithValue("@Expiry", foodDonation.Expiry);
-                    command.Parameters.AddWithValue("@Weight", foodDonation.Weight);
-                    command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
-                    command.Parameters.AddWithValue("@RE_Id", foodDonation.RE_Id.Id);
 
-                    command.ExecuteNonQuery();
-                }
-            }
+            using SqlConnection connection = new(connectionString);
+            connection.Open();
+            string query = "INSERT INTO FOOD_DONATION (Category,  Item_Name, Description_and_inner_units, Expiry, Weight, Donation_Date, RE_Id) " +
+                           "VALUES (@Category, @Item_Name, @Description_and_inner_units, @Expiry, @Weight, @Donation_Date, @RE_Id)";
+            using SqlCommand command = new(query, connection);
+            _ = command.Parameters.AddWithValue("@Category", foodDonation.Category);
+
+            _ = command.Parameters.AddWithValue("@Item_Name", foodDonation.Item_Name);
+            _ = command.Parameters.AddWithValue("@Description_and_inner_units", foodDonation.Description_and_inner_units);
+            _ = command.Parameters.AddWithValue("@Expiry", foodDonation.Expiry);
+            _ = command.Parameters.AddWithValue("@Weight", foodDonation.Weight);
+            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
+            _ = command.Parameters.AddWithValue("@RE_Id", foodDonation.RE_Id.Id);
+
+            _ = command.ExecuteNonQuery();
         }
         public List<FoodDonationViewModel> GetAllFoodDonations()
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-            List<FoodDonationViewModel> foodDonations = new List<FoodDonationViewModel>();
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            List<FoodDonationViewModel> foodDonations = [];
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new(connectionString))
             {
                 connection.Open();
                 string query = "SELECT FD.FD_Id, FD.Category,  FD.Item_Name, FD.Description_and_inner_units, FD.Expiry, FD.Weight, FD.Donation_Date," +
@@ -52,72 +55,66 @@ namespace MDisasaterDampener.Services
                               ;
 
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using SqlCommand command = new(query, connection);
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                    FoodDonationViewModel foodDonation = new()
                     {
-                        FoodDonationViewModel foodDonation = new FoodDonationViewModel
-                        {
-                            FD_Id = int.Parse(reader["FD_Id"].ToString()),
-                            Category = (FoodDonationViewModel.Categories)int.Parse(reader["Category"].ToString()),
+                        FD_Id = int.Parse(reader["FD_Id"].ToString()),
+                        Category = (FoodDonationViewModel.Categories)int.Parse(reader["Category"].ToString()),
 
-                            Item_Name = reader["Item_Name"].ToString(),
-                            Description_and_inner_units = reader["Description_and_inner_units"].ToString(),
-                            Expiry = DateOnly.ParseExact(reader["Expiry"].ToString().Split(' ')[0], "yyyy/MM/dd"),
-                            Weight = reader["Weight"].ToString(),
-                            Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
-                            RE_Id = new ReliefEffortViewModel
-                            {
-                                Id = Convert.ToInt32(reader["ReliefEffortId"]),
-                                Title = reader["Title"].ToString(),
-                                Description = reader["ReliefEffortDescription"].ToString()
-                            }
-                        };
-                        foodDonations.Add(foodDonation);
-                    }
+                        Item_Name = reader["Item_Name"].ToString(),
+                        Description_and_inner_units = reader["Description_and_inner_units"].ToString(),
+                        Expiry = DateOnly.ParseExact(reader["Expiry"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Weight = reader["Weight"].ToString(),
+                        Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        RE_Id = new ReliefEffortViewModel
+                        {
+                            Id = Convert.ToInt32(reader["ReliefEffortId"]),
+                            Title = reader["Title"].ToString(),
+                            Description = reader["ReliefEffortDescription"].ToString()
+                        }
+                    };
+                    foodDonations.Add(foodDonation);
                 }
             }
             return foodDonations;
         }
         public void CreateMedicineDonation(MedicineDonationViewModel donation)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "INSERT INTO MEDICINE_DONATION (Description, Expiry, Unit_Type, Donation_Date, RE_Id) " +
-                               "VALUES ( @Description, @Expiry, @Unit_Type, @Donation_Date, @RE_Id)";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                   
+            using SqlConnection connection = new(connectionString);
+            connection.Open();
+            string query = "INSERT INTO MEDICINE_DONATION (Description, Expiry, Unit_Type, Donation_Date, RE_Id) " +
+                           "VALUES ( @Description, @Expiry, @Unit_Type, @Donation_Date, @RE_Id)";
+            using SqlCommand command = new(query, connection);
 
-                
-                    command.Parameters.AddWithValue("@Description", donation.Description);
-                    command.Parameters.AddWithValue("@Expiry", donation.Expiry);
-                    command.Parameters.AddWithValue("@Unit_Type", donation.Unit_Type);
-                    command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
-                    command.Parameters.AddWithValue("@RE_Id", donation.RE_Id.Id);
 
-                    command.ExecuteNonQuery();
-                }
-            }
+
+            _ = command.Parameters.AddWithValue("@Description", donation.Description);
+            _ = command.Parameters.AddWithValue("@Expiry", donation.Expiry);
+            _ = command.Parameters.AddWithValue("@Unit_Type", donation.Unit_Type);
+            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
+            _ = command.Parameters.AddWithValue("@RE_Id", donation.RE_Id.Id);
+
+            _ = command.ExecuteNonQuery();
         }
         public List<MedicineDonationViewModel> GetAllMedicineDonations()
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-            List<MedicineDonationViewModel> donations = new List<MedicineDonationViewModel>();
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            List<MedicineDonationViewModel> donations = [];
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new(connectionString))
             {
                 connection.Open();
                 string query = "SELECT MD.MD_Id, MD.Description, MD.Expiry, MD.Unit_Type, MD.Donation_Date," +
@@ -127,70 +124,67 @@ namespace MDisasaterDampener.Services
                               ;
 
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using SqlCommand command = new(query, connection);
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+
+                    MedicineDonationViewModel donation = new()
                     {
-                        MedicineDonationViewModel donation = new MedicineDonationViewModel
+                        MD_Id = int.Parse(reader["MD_Id"].ToString()),
+
+                        Description = reader["Description"].ToString(),
+                        Expiry = DateOnly.ParseExact(reader["Expiry"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Unit_Type = Convert.ToInt32(reader["Unit_Type"]),
+                        Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        RE_Id = new ReliefEffortViewModel
                         {
-                            MD_Id = int.Parse(reader["MD_Id"].ToString()),
-                           
-                            Description= reader["Description"].ToString(),
-                            Expiry = DateOnly.ParseExact(reader["Expiry"].ToString().Split(' ')[0], "yyyy/MM/dd"),
-                            Unit_Type = Convert.ToInt32(reader["Unit_Type"]),
-                            Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
-                            RE_Id = new ReliefEffortViewModel
-                            {
-                                Id = Convert.ToInt32(reader["ReliefEffortId"]),
-                                Title = reader["Title"].ToString(),
-                                Description = reader["ReliefEffortDescription"].ToString()
-                            }
-                        };
-                        donations.Add(donation);
-                    }
+                            Id = Convert.ToInt32(reader["ReliefEffortId"]),
+                            Title = reader["Title"].ToString(),
+                            Description = reader["ReliefEffortDescription"].ToString()
+                        }
+                    };
+
+                    donations.Add(donation);
                 }
             }
             return donations;
-        } 
+        }
         public void CreateClothingDonation(ClothingDonationViewModel donation)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "INSERT INTO CLOTHING_DONATION (Item_Description, Quantity, Material, Donation_Date, RE_Id) " +
-                               "VALUES ( @Item_Description, @Quantity, @Material, @Donation_Date, @RE_Id)";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                   
+            using SqlConnection connection = new(connectionString);
+            connection.Open();
+            string query = "INSERT INTO CLOTHING_DONATION (Item_Description, Quantity, Material, Donation_Date, RE_Id) " +
+                           "VALUES ( @Item_Description, @Quantity, @Material, @Donation_Date, @RE_Id)";
+            using SqlCommand command = new(query, connection);
 
-                
-                    command.Parameters.AddWithValue("@Description", donation.Item_Description);
-                    command.Parameters.AddWithValue("@Quantity", donation.Quantity);
-                    command.Parameters.AddWithValue("@Material", donation.Material);
-                    command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
-                    command.Parameters.AddWithValue("@RE_Id", donation.RE_Id.Id);
 
-                    command.ExecuteNonQuery();
-                }
-            }
+
+            _ = command.Parameters.AddWithValue("@Description", donation.Item_Description);
+            _ = command.Parameters.AddWithValue("@Quantity", donation.Quantity);
+            _ = command.Parameters.AddWithValue("@Material", donation.Material);
+            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
+            _ = command.Parameters.AddWithValue("@RE_Id", donation.RE_Id.Id);
+
+            _ = command.ExecuteNonQuery();
         }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Globalization", "CA1305:Specify IFormatProvider", Justification = "<Pending>")]
         public List<ClothingDonationViewModel> GetAllClothingDonations()
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-            List<ClothingDonationViewModel> donations = new List<ClothingDonationViewModel>();
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            List<ClothingDonationViewModel> donations = [];
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new(connectionString))
             {
                 connection.Open();
                 string query = "SELECT CD.CD_Id, CD.Item_Description, CD.Quantity, CD.Material, CD.Donation_Date," +
@@ -200,33 +194,33 @@ namespace MDisasaterDampener.Services
                               ;
 
 
-                using (SqlCommand command = new SqlCommand(query, connection))
+                using SqlCommand command = new(query, connection);
+                SqlDataReader reader = command.ExecuteReader();
+                while (reader.Read())
                 {
-                    SqlDataReader reader = command.ExecuteReader();
-                    while (reader.Read())
+                    ClothingDonationViewModel donation = new()
                     {
-                        ClothingDonationViewModel donation = new ClothingDonationViewModel
-                        {
-                            CD_Id = int.Parse(reader["CD_Id"].ToString()),
+                        CD_Id = int.Parse(reader["CD_Id"].ToString()),
 
-                            Item_Description = reader["Item_Description"].ToString(),
-                            Material = reader["Material"].ToString(),
-                            Quantity = Convert.ToInt32(reader["Quantity"]),
-                            Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
-                            RE_Id = new ReliefEffortViewModel
-                            {
-                                Id = Convert.ToInt32(reader["ReliefEffortId"]),
-                                Title = reader["Title"].ToString(),
-                                Description = reader["ReliefEffortDescription"].ToString()
-                            }
-                        };
-                        donations.Add(donation);
-                    }
+                        Item_Description = reader["Item_Description"].ToString(),
+                        Material = reader["Material"].ToString(),
+                        Quantity = Convert.ToInt32(reader["Quantity"]),
+                        Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        RE_Id = new ReliefEffortViewModel
+                        {
+                            Id = Convert.ToInt32(reader["ReliefEffortId"]),
+                            Title = reader["Title"].ToString(),
+                            Description = reader["ReliefEffortDescription"].ToString()
+                        }
+                    };
+                    donations.Add(donation);
                 }
             }
             return donations;
         }
     }
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CA1305 // Specify IFormatProvider
 
-    
 }

@@ -7,9 +7,9 @@ namespace MDisasaterDampener.Controllers
     {
         public IActionResult ViewMessages()
         {
-            var messages = new MessagesViewModel
+            MessagesViewModel messages = new()
             {
-               // Messages=messagesService.ReadMessages()
+                // Messages=messagesService.ReadMessages()
             };
             return View(messages);
         }

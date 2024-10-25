@@ -1,14 +1,14 @@
 ﻿using MDisasaterDampener.Models;
-using MDisasaterDampener.Services;
-using Microsoft.AspNetCore.Identity;
+using MDisasaterDampener.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 
 namespace MDisasaterDampener.Controllers
 {
-    public class UserController:Controller 
+    public class UserController(IUserServices services) : Controller
     {
-        UserServices userServices = new UserServices();
+        private readonly IUserServices userServices = services;
+
         public IActionResult Login()
         {
             return View();
@@ -17,17 +17,26 @@ namespace MDisasaterDampener.Controllers
         {
             return View();
         }
-      
-       
+
+
         public IActionResult ProcessLogin(LoginViewModel returningUser)
         {
-            UserViewModel user = new UserViewModel();
+            UserViewModel user = new();
             if (userServices.Login(returningUser) != null)
             {
-                
-                HttpContext.Session.SetString("Current_User", JsonConvert.SerializeObject(userServices.Login(returningUser)));
-            
-     
+                try
+                {
+                    DefaultHttpContext httpContext = new();
+                    httpContext.Session.SetString("Current_User", JsonConvert.SerializeObject(userServices.Login(returningUser)));
+
+                }
+                catch
+                {
+
+                }
+
+
+
                 return RedirectToAction("Index", "Home");
             }
             else
@@ -35,18 +44,19 @@ namespace MDisasaterDampener.Controllers
                 ModelState.AddModelError("", "Invalid login attempt.");
                 return View("Login", user);
             }
-         
+
 
         }
-        public IActionResult ProcessRegistation(RegisterViewModel user)
+
+        public IActionResult ProcessRegistration(RegisterViewModel user)
         {
             userServices.Register(user);
             return View("Login");
 
-        }    
+        }
         public IActionResult AccountManagement()
         {
-           
+
             return View();
 
         }
@@ -59,7 +69,8 @@ namespace MDisasaterDampener.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View("ChangePassword", user);
-        } public IActionResult ProcessChangeEmail(UserViewModel user, int id)
+        }
+        public IActionResult ProcessChangeEmail(UserViewModel user, int id)
         {
             if (ModelState.IsValid)
             {
@@ -67,7 +78,8 @@ namespace MDisasaterDampener.Controllers
                 return RedirectToAction("Index", "Home");
             }
             return View("ChangePassword", user);
-        } public IActionResult ProcessChangePassword(UserViewModel user, int id)
+        }
+        public IActionResult ProcessChangePassword(UserViewModel user, int id)
         {
             if (ModelState.IsValid)
             {
@@ -76,6 +88,6 @@ namespace MDisasaterDampener.Controllers
             }
             return View("ChangePassword", user);
         }
-       
+
     }
 }

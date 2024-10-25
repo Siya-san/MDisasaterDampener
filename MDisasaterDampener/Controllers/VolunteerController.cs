@@ -6,14 +6,14 @@ using System.Text;
 
 namespace MDisasaterDampener.Controllers
 {
-   
+
     public class VolunteerController : Controller
     {
-        VolunteerServices volunteerServices = new VolunteerServices();
-        ReliefServices reliefServices = new ReliefServices();
+        private readonly VolunteerServices volunteerServices = new();
+        private readonly ReliefServices reliefServices = new();
         public IActionResult VolunteerCenter()
         {
-            var volunteerRequest = new RequestViewModel
+            RequestViewModel volunteerRequest = new()
             {
                 volunteerRequests = volunteerServices.ReadRequest()
 
@@ -23,7 +23,7 @@ namespace MDisasaterDampener.Controllers
         }
         public IActionResult CreateVolunteerRequest()
         {
-            var requestModel = new RequestViewModel()
+            RequestViewModel requestModel = new()
             {
                 volunteerRequest = new VolunteerRequestViewModel(),
                 reliefEfforts = reliefServices.Read()
@@ -35,18 +35,25 @@ namespace MDisasaterDampener.Controllers
         public IActionResult ProcessVolunteerRequest(VolunteerRequestViewModel volunteerRequest)
         {
             if (volunteerRequest != null)
+            {
                 volunteerServices.CreateRequest(volunteerRequest);
+            }
             else
+            {
                 return View("CreateVolunteerRequest");
+            }
+
             return RedirectToAction("VolunteerCenter", "Volunteer");
         }
         public IActionResult ProcessVolunteer(int id)
         {
-            UserViewModel user = new UserViewModel();
-            if (HttpContext.Session.TryGetValue("Current_User", out var userDataBytes))
+            UserViewModel user = new();
+            if (HttpContext.Session.TryGetValue("Current_User", out byte[]? userDataBytes))
             {
                 string userDataJson = Encoding.UTF8.GetString(userDataBytes);
+#pragma warning disable CS8600 // Converting null literal or possible null value to non-nullable type.
                 user = JsonConvert.DeserializeObject<UserViewModel>(userDataJson);
+#pragma warning restore CS8600 // Converting null literal or possible null value to non-nullable type.
             }
             if (user != null && id > 0)
             {
@@ -54,7 +61,7 @@ namespace MDisasaterDampener.Controllers
                 volunteerServices.UpdateNumberVolunteers(id);
             }
 
-                return View("VolunteerCenter");
+            return View("VolunteerCenter");
         }
 
     }

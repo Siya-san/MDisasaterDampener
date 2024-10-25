@@ -1,50 +1,58 @@
-﻿using MDisasaterDampener.Models;
+﻿using Dapper;
+using MDisasaterDampener.Models;
+using MDisasaterDampener.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 using System.Security.Cryptography;
 using System.Text;
 
 
 namespace MDisasaterDampener.Services
 {
-    public class UserServices
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable CA1305 // Specify IFormatProvider
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+    public class UserServices(IDatabaseServices service) : IUserServices
     {
+        private readonly IDatabaseServices databaseServices = service;
+
         public void Register(RegisterViewModel user)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
      .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
      .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
             try
             {
-                using (SqlConnection connection = new SqlConnection(connectionString))
+                using SqlConnection connection = new(connectionString);
+                connection.Open();
+                string query = "INSERT INTO USERS (FirstName, LastName, Username, Email, Password) VALUES (@FirstName, @LastName, @Username, @Email, @Password)";
+                SqlCommand command = new(query, connection);
+
+                _ = command.Parameters.AddWithValue("@FirstName", user.firstName);
+                _ = command.Parameters.AddWithValue("@LastName", user.lastName);
+                _ = command.Parameters.AddWithValue("@Username", user.username);
+                _ = command.Parameters.AddWithValue("@Email", user.email);
+
+                // Log or check the encrypted password
+                string encryptedPassword = EncryptPassword(user.password);
+                Console.WriteLine($"Encrypted Password: {encryptedPassword}");
+
+                _ = command.Parameters.AddWithValue("@Password", encryptedPassword);
+
+                int result = command.ExecuteNonQuery();
+
+                if (result > 0)
                 {
-                    connection.Open();
-                    string query = "INSERT INTO USERS (FirstName, LastName, Username, Email, Password) VALUES (@FirstName, @LastName, @Username, @Email, @Password)";
-                    SqlCommand command = new SqlCommand(query, connection);
-
-                    command.Parameters.AddWithValue("@FirstName", user.firstName);
-                    command.Parameters.AddWithValue("@LastName", user.lastName);
-                    command.Parameters.AddWithValue("@Username", user.username);
-                    command.Parameters.AddWithValue("@Email", user.email);
-
-                    // Log or check the encrypted password
-                    string encryptedPassword = EncryptPassword(user.password);
-                    Console.WriteLine($"Encrypted Password: {encryptedPassword}");
-
-                    command.Parameters.AddWithValue("@Password", encryptedPassword);
-
-                    int result = command.ExecuteNonQuery();
-
-                    if (result > 0)
-                    {
-                        Console.WriteLine("User registered successfully.");
-                    }
-                    else
-                    {
-                        Console.WriteLine("User registration failed.");
-                    }
+                    Console.WriteLine("User registered successfully.");
+                }
+                else
+                {
+                    Console.WriteLine("User registration failed.");
                 }
             }
             catch (SqlException ex)
@@ -59,134 +67,120 @@ namespace MDisasaterDampener.Services
 
         public static string EncryptPassword(string password)
         {
-            using (SHA256 sha256Hash = SHA256.Create())
+
+
+            byte[] data = SHA256.HashData(Encoding.UTF8.GetBytes(password));
+
+
+            StringBuilder stringBuilder = new();
+
+
+            for (int i = 0; i < data.Length; i++)
             {
-
-                byte[] data = sha256Hash.ComputeHash(Encoding.UTF8.GetBytes(password));
-
-
-                StringBuilder stringBuilder = new StringBuilder();
-
-
-                for (int i = 0; i < data.Length; i++)
-                {
-                    stringBuilder.Append(data[i].ToString("x2"));
-                }
-
-                return stringBuilder.ToString();
+                _ = stringBuilder.Append(data[i].ToString("x2"));
             }
+
+            return stringBuilder.ToString();
+
         }
 
         public static bool ValidatePassword(string inputPassword, string hashedPassword)
         {
             string hashedInput = EncryptPassword(inputPassword);
-            return System.String.Equals(hashedInput, hashedPassword, StringComparison.Ordinal);
+            return string.Equals(hashedInput, hashedPassword, StringComparison.Ordinal);
         }
-        public UserViewModel Login(LoginViewModel returningUser)
+
+        public UserViewModel? Login(LoginViewModel returningUser)
+
         {
-            var configuration = new ConfigurationBuilder()
+            string query = "SELECT * FROM USERS WHERE Username = @Username";
+            var parameters = new { Username = returningUser.username };
+
+            using IDbConnection connection = databaseServices.GetConnection();
+
+            IEnumerable<UserViewModel> users = connection.Query<UserViewModel>(query, parameters);
+            UserViewModel? user = users.FirstOrDefault();
+
+
+            if (user != null && ValidatePassword(returningUser.password, user.password))
+            {
+                return user;
+            }
+
+
+
+            return null;
+        }
+
+        public void ChangeUsername(UserViewModel user, int id)
+        {
+
+            IConfigurationRoot configuration = new ConfigurationBuilder()
            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
            .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            using SqlConnection connection = new(connectionString);
 
-            UserViewModel user=new UserViewModel();
-            // Open a connection to the database
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "SELECT * FROM USERS WHERE Username=@Username ";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Username", returningUser.username);
-                using (SqlDataReader reader = command.ExecuteReader())
-                {
-                    while (reader.Read())
-                    {
-                        if (reader != null)
-                        {
-                            if (ValidatePassword(returningUser.password, reader["Password"].ToString()))
-                            {
-                                user.id = int.Parse(reader["Id"].ToString());
-                                user.firstName = reader["FirstName"].ToString();
-                                user.lastName = reader["LastName"].ToString();
-                                user.username = reader["Username"].ToString();
-                                user.email = reader["Email"].ToString();
-                                user.password = reader["Password"].ToString();
-                                return user;
-                            }
-                        }
-                    }
-                    return null;
-                }
+            connection.Open();
+            string query = "UPDATE USERS SET Username = @Username WHERE Id = @Id";
+            using SqlCommand command = new(query, connection);
 
+            _ = command.Parameters.AddWithValue("@Id", id);
+            _ = command.Parameters.AddWithValue("@password", EncryptPassword(user.password));
 
+            _ = command.ExecuteNonQuery();
 
-
-            }
 
         }
-        public void ChangeUsername(UserViewModel User, int Id)
+        public void ChangeEmail(UserViewModel user, int id)
         {
 
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
            .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "UPDATE USERS SET Username = @Username WHERE Id = @Id";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", Id);
-                    command.Parameters.AddWithValue("@password", EncryptPassword(User.password));
-                    command.Parameters.AddWithValue("@defaultPw", false);
-                    command.ExecuteNonQuery();
-                }
-            }
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            using SqlConnection connection = new(connectionString);
+
+            connection.Open();
+            string query = "UPDATE USERS SET Email = @Email WHERE Id = @Id";
+            using SqlCommand command = new(query, connection);
+
+            _ = command.Parameters.AddWithValue("@Id", id);
+            _ = command.Parameters.AddWithValue("@Email", EncryptPassword(user.password));
+
+            _ = command.ExecuteNonQuery();
+
+
         }
-        public void ChangeEmail( UserViewModel User, int Id)
+        public void ChangePassword(UserViewModel user, int id)
         {
 
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
            .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "UPDATE USERS SET Email = @Email WHERE Id = @Id";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", Id);
-                    command.Parameters.AddWithValue("@Email", EncryptPassword(User.password));
-                  
-                    command.ExecuteNonQuery();
-                }
-            }
-        } public void ChangePassword(UserViewModel User, int Id)
-        {
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            using SqlConnection connection = new(connectionString);
 
-            var configuration = new ConfigurationBuilder()
-           .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-           .Build();
+            connection.Open();
+            string query = "UPDATE USERS SET Password = @Password WHERE Id = @Id";
+            using SqlCommand command = new(query, connection);
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "UPDATE USERS SET Password = @Password WHERE Id = @Id";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", Id);
-                    command.Parameters.AddWithValue("@Password", EncryptPassword(User.password));
-                  
-                    command.ExecuteNonQuery();
-                }
-            }
+            _ = command.Parameters.AddWithValue("@Id", id);
+            _ = command.Parameters.AddWithValue("@Password", EncryptPassword(user.password));
+
+            _ = command.ExecuteNonQuery();
+
+
         }
+
 
     }
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CA1305 // Specify IFormatProvider
+#pragma warning disable IDE0046 // Convert to conditional expression
+#pragma warning disable CS8766 // Nullability of reference types in return type doesn't match implicitly implemented member (possibly because of nullability attributes).
 }

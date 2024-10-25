@@ -1,45 +1,46 @@
 ﻿using MDisasaterDampener.Models;
-using Microsoft.AspNetCore.Http;
+using MDisasaterDampener.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace MDisasaterDampener.Services
 {
-    public class VolunteerServices
+#pragma warning disable CA1305 // Specify IFormatProvider
+#pragma warning disable CS8602 // Dereference of a possibly null reference.
+#pragma warning disable CS8604 // Possible null reference argument.
+    public class VolunteerServices : IVolunteerServices
     {
         public void CreateRequest(VolunteerRequestViewModel volunteerRequest)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "INSERT INTO VOLUNTEER_REQUEST (Number_Volunteers, Date, Description, Rid) " +
-                               "VALUES (@Number_Volunteers, @Date, @Description, @Rid)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Number_Volunteers", volunteerRequest.Number_Volunteers);
-                command.Parameters.AddWithValue("@Date", volunteerRequest.Date); 
-                command.Parameters.AddWithValue("@Description", volunteerRequest.Description);
-                command.Parameters.AddWithValue("@Rid", volunteerRequest.Rid.Id); 
+            using SqlConnection connection = new(connectionString);
+            connection.Open();
+            string query = "INSERT INTO VOLUNTEER_REQUEST (Number_Volunteers, Date, Description, Rid) " +
+                           "VALUES (@Number_Volunteers, @Date, @Description, @Rid)";
+            SqlCommand command = new(query, connection);
+            _ = command.Parameters.AddWithValue("@Number_Volunteers", volunteerRequest.Number_Volunteers);
+            _ = command.Parameters.AddWithValue("@Date", volunteerRequest.Date);
+            _ = command.Parameters.AddWithValue("@Description", volunteerRequest.Description);
+            _ = command.Parameters.AddWithValue("@Rid", volunteerRequest.Rid.Id);
 
-                command.ExecuteNonQuery();
-            }
+            _ = command.ExecuteNonQuery();
         }
 
         public VolunteerRequestViewModel ViewRequest(int id)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 
-            VolunteerRequestViewModel volunteerRequest = new VolunteerRequestViewModel();
+            VolunteerRequestViewModel volunteerRequest = new();
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new(connectionString))
             {
                 connection.Open();
                 string query = "SELECT VR.Id, VR.Number_Volunteers, VR.Date, VR.Description, " +
@@ -48,26 +49,26 @@ namespace MDisasaterDampener.Services
                                "JOIN RELIEF_EFFORT RE ON VR.Rid = RE.Id " +
                                "WHERE VR.Id = @Id";
 
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Id", id);
+                SqlCommand command = new(query, connection);
+                _ = command.Parameters.AddWithValue("@Id", id);
 
-                using (SqlDataReader reader = command.ExecuteReader())
+                using SqlDataReader reader = command.ExecuteReader();
+
+                if (reader.Read())
                 {
-                    if (reader.Read())  
-                    {
-                        volunteerRequest.Id = Convert.ToInt32(reader["Id"]);
-                        volunteerRequest.Number_Volunteers = Convert.ToInt32(reader["Number_Volunteers"]);
-                        volunteerRequest.Date = DateOnly.ParseExact(reader["Date"].ToString().Split(' ')[0], "yyyy/MM/dd"); 
-                        volunteerRequest.Description = reader["Description"].ToString();
+                    volunteerRequest.Id = Convert.ToInt32(reader["Id"]);
+                    volunteerRequest.Number_Volunteers = Convert.ToInt32(reader["Number_Volunteers"]);
+                    volunteerRequest.Date = DateOnly.ParseExact(reader["Date"].ToString().Split(' ')[0], "yyyy/MM/dd");
+                    volunteerRequest.Description = reader["Description"].ToString();
 
-                        volunteerRequest.Rid = new ReliefEffortViewModel
-                        {
-                            Id = Convert.ToInt32(reader["ReliefEffortId"]),
-                            Title = reader["Title"].ToString(),
-                            Description = reader["ReliefEffortDescription"].ToString()
-                        };
-                    }
+                    volunteerRequest.Rid = new ReliefEffortViewModel
+                    {
+                        Id = Convert.ToInt32(reader["ReliefEffortId"]),
+                        Title = reader["Title"].ToString(),
+                        Description = reader["ReliefEffortDescription"].ToString()
+                    };
                 }
+
             }
 
             return volunteerRequest;
@@ -75,14 +76,14 @@ namespace MDisasaterDampener.Services
 
         public List<VolunteerRequestViewModel> ReadRequest()
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
-            List<VolunteerRequestViewModel> volunteerRequests = new List<VolunteerRequestViewModel>();
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            List<VolunteerRequestViewModel> volunteerRequests = [];
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
+            using (SqlConnection connection = new(connectionString))
             {
                 connection.Open();
 
@@ -90,17 +91,17 @@ namespace MDisasaterDampener.Services
                                      "FROM VOLUNTEER_REQUEST VR " +
                                      "JOIN RELIEF_EFFORT RE ON VR.Rid = RE.Id";
 
-                SqlCommand command = new SqlCommand(selectQuery, connection);
+                SqlCommand command = new(selectQuery, connection);
                 SqlDataReader reader = command.ExecuteReader();
 
                 while (reader.Read())
                 {
-                    VolunteerRequestViewModel volunteerRequest = new VolunteerRequestViewModel
+                    VolunteerRequestViewModel volunteerRequest = new()
                     {
                         Id = int.Parse(reader["Id"].ToString()),
                         Number_Volunteers = int.Parse(reader["Number_Volunteers"].ToString()),
                         Date = DateOnly.ParseExact(reader["Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
-                    Description = reader["Description"].ToString(),
+                        Description = reader["Description"].ToString(),
                         Rid = new ReliefEffortViewModel
                         {
                             Id = int.Parse(reader["ReliefEffortId"].ToString()),
@@ -116,49 +117,47 @@ namespace MDisasaterDampener.Services
             return volunteerRequests;
         }
 
-        public void CreateVolunteer( int Uid, int Vrid)
+        public void CreateVolunteer(int Uid, int Vrid)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
 
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "INSERT INTO VOLUNTEERS (Uid, Vrid) " +
-                               "VALUES (@Uid, @Vrid)";
-                SqlCommand command = new SqlCommand(query, connection);
-                command.Parameters.AddWithValue("@Uid", Uid);
-                command.Parameters.AddWithValue("@Vrid", Vrid);
+            using SqlConnection connection = new(connectionString);
+            connection.Open();
+            string query = "INSERT INTO VOLUNTEERS (Uid, Vrid) " +
+                           "VALUES (@Uid, @Vrid)";
+            SqlCommand command = new(query, connection);
+            _ = command.Parameters.AddWithValue("@Uid", Uid);
+            _ = command.Parameters.AddWithValue("@Vrid", Vrid);
 
 
-                command.ExecuteNonQuery();
-            }
+            _ = command.ExecuteNonQuery();
         }
-        public void UpdateNumberVolunteers( int Id)
+        public void UpdateNumberVolunteers(int Id)
         {
-            var configuration = new ConfigurationBuilder()
+            IConfigurationRoot configuration = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .Build();
 
-            string connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
+            string? connectionString = configuration.GetConnectionString("AZURE_SQL_CONNECTIONSTRING");
             VolunteerRequestViewModel volunteerRequest = ViewRequest(Id);
-            using (SqlConnection connection = new SqlConnection(connectionString))
-            {
-                connection.Open();
-                string query = "UPDATE VOLUNTEER_REQUEST SET Number_Volunteers = @Number_Volunteers WHERE Id = @Id";
-                using (SqlCommand command = new SqlCommand(query, connection))
-                {
-                    command.Parameters.AddWithValue("@Id", Id);
-                    command.Parameters.AddWithValue("@Number_Volunteers", volunteerRequest.Number_Volunteers-1);
-                   
+            using SqlConnection connection = new(connectionString);
+            connection.Open();
+            string query = "UPDATE VOLUNTEER_REQUEST SET Number_Volunteers = @Number_Volunteers WHERE Id = @Id";
+            using SqlCommand command = new(query, connection);
 
-                    command.ExecuteNonQuery();
-                }
-            }
+            _ = command.Parameters.AddWithValue("@Id", Id);
+            _ = command.Parameters.AddWithValue("@Number_Volunteers", volunteerRequest.Number_Volunteers - 1);
+
+
+            _ = command.ExecuteNonQuery();
+
         }
     }
-
+#pragma warning restore CS8604 // Possible null reference argument.
+#pragma warning restore CS8602 // Dereference of a possibly null reference.
+#pragma warning restore CA1305 // Specify IFormatProvider
 }

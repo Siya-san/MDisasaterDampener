@@ -1,6 +1,6 @@
 ﻿namespace MDisasaterDampener.Models
 {
-   
+
     public class VolunteerViewModel
     {
         public int Id { get; set; }

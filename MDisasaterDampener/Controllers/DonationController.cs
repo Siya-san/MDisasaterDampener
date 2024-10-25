@@ -6,25 +6,27 @@ namespace MDisasaterDampener.Controllers
 {
     public class DonationController : Controller
     {
-        private readonly DonationServices donationService = new DonationServices();
-        private readonly ReliefServices reliefService = new ReliefServices();
+        private readonly DonationServices donationService = new();
+        private readonly ReliefServices reliefService = new();
         public IActionResult DonateFood()
         {
-            var reliefEffots = new FoodDonationViewModel
+            FoodDonationViewModel reliefEffots = new()
             {
                 reliefEfforts = reliefService.Read()
             };
             return View(reliefEffots);
-        } public IActionResult DonateMedicine()
+        }
+        public IActionResult DonateMedicine()
         {
-            var reliefEffots = new MedicineDonationViewModel
+            MedicineDonationViewModel reliefEffots = new()
             {
                 reliefEfforts = reliefService.Read()
             };
             return View(reliefEffots);
-        } public IActionResult DonateClothes()
+        }
+        public IActionResult DonateClothes()
         {
-            var reliefEffots = new ClothingDonationViewModel
+            ClothingDonationViewModel reliefEffots = new()
             {
                 reliefEfforts = reliefService.Read()
             };
@@ -33,55 +35,55 @@ namespace MDisasaterDampener.Controllers
         public IActionResult CreateFoodDonation(FoodDonationViewModel foodDonation)
         {
             donationService.CreateFoodDonation(foodDonation);
-            RedirectToAction("Index", "Home");
+            _ = RedirectToAction("Index", "Home");
             return Ok("Food Donation successfully created.");
         }
 
-   
+
         public IActionResult GetAllFoodDonations()
         {
-            var allFoodDonations = new FoodDonationViewModel
+            FoodDonationViewModel allFoodDonations = new()
             {
                 foodDonations = donationService.GetAllFoodDonations()
             };
-           
+
             return View(allFoodDonations);
         }
-     
 
-   
+
+
         public IActionResult GetAllMedicineDonations()
         {
-            var allMedicineDonations = new MedicineDonationViewModel
+            MedicineDonationViewModel allMedicineDonations = new()
             {
-             donations = donationService.GetAllMedicineDonations()
+                donations = donationService.GetAllMedicineDonations()
             };
-           
+
             return View(allMedicineDonations);
         }
         public IActionResult CreateMedicineDonation(MedicineDonationViewModel medicineDonation)
         {
             donationService.CreateMedicineDonation(medicineDonation);
-            RedirectToAction("Index", "Home");
+            _ = RedirectToAction("Index", "Home");
             return Ok("Medicine Donation successfully created.");
         }
-   public IActionResult CreateClothingDonation(ClothingDonationViewModel clothingDonation)
+        public IActionResult CreateClothingDonation(ClothingDonationViewModel clothingDonation)
         {
             donationService.CreateClothingDonation(clothingDonation);
-            RedirectToAction("Index", "Home");
+            _ = RedirectToAction("Index", "Home");
             return Ok("Clothing Donation successfully created.");
         }
-   
+
         public IActionResult GetAllClothingDonations()
         {
-            var allClothingDonations = new ClothingDonationViewModel
+            ClothingDonationViewModel allClothingDonations = new()
             {
                 donations = donationService.GetAllClothingDonations()
             };
-           
+
             return View(allClothingDonations);
         }
 
-        
+
     }
 }

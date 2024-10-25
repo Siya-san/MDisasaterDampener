@@ -1,5 +1,7 @@
 ﻿namespace MDisasaterDampener.Models
 {
+#pragma warning disable IDE1006 // Naming Styles
+#pragma warning disable CA1707 // Identifiers should not contain underscores
     public class FoodDonationViewModel
     {
         public int FD_Id { get; set; }
@@ -16,7 +18,7 @@
         public enum Categories
         {
             Fruit,
-            Vegetables, 
+            Vegetables,
             Grains,
 
             Dairy,
@@ -27,10 +29,13 @@
         public FoodDonationViewModel()
         {
             RE_Id = new ReliefEffortViewModel();
-            Expiry  = DateOnly.FromDateTime(DateTime.Now);
-            reliefEfforts = new List<ReliefEffortViewModel>();
-            foodDonations = new List<FoodDonationViewModel>();
+            Expiry = DateOnly.FromDateTime(DateTime.Now);
+            reliefEfforts = [];
+            foodDonations = [];
         }
 
     }
+#pragma warning disable CA1707 // Identifiers should not contain underscores
+#pragma warning disable IDE1006 // Naming Styles
+
 }

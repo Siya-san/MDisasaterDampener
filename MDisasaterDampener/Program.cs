@@ -1,7 +1,17 @@
+using MDisasaterDampener.Services.Interfaces;
+using MDisasaterDampener.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IDonationServices, DonationServices>();
+builder.Services.AddScoped<IReliefServices, ReliefServices>();
+builder.Services.AddScoped<IVolunteerServices, VolunteerServices>();
+
+
+
 var connection = " ";
 if (builder.Environment.IsDevelopment())
 {
