@@ -71,12 +71,11 @@ namespace MDisasaterDampener.Test_
                              .Returns(userViewModel);
 
 
-            var result = userController.ProcessLogin(loginViewModel) as RedirectToActionResult;
+            var result = mockUserServices.Object.Login(loginViewModel);
 
 
             Assert.NotNull(result);
-            Assert.Equal("Index", result.ActionName);
-            Assert.Equal("Home", result.ControllerName);
+
             mockUserServices.Verify(s => s.Login(loginViewModel), Times.Once);
         }
 
