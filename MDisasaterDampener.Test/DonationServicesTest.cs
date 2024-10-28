@@ -65,7 +65,7 @@ namespace MDisasaterDampener.Test_
             var medicineDonation = new MedicineDonationViewModel
             {
                 Description = "Paracetamol",
-                Expiry = DateOnly.FromDateTime(DateTime.Now.AddYears(1)),
+                Expiry = DateOnly.FromDateTime(DateTime.Now.AddYears(1)).ToString(),
                 Unit_Type = 100,
                 RE_Id = new ReliefEffortViewModel { Id = 1 }
             };
