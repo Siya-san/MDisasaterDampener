@@ -15,6 +15,7 @@ variables:
   solution: '**/MDisasaterDampener.sln'
   project: '**/MDisasaterDampener.csproj'
   tests: '**/MDisasaterDampenerTest.csproj'
+  ASPNETCORE_ENVIRONMENT: 'Development' # Set environment to Development for detailed error logs
   buildConfiguration: 'Release'
 steps:
   
@@ -32,7 +33,8 @@ steps:
     command: 'test'
     projects: '$(tests)'
     arguments: '--configuration $(buildConfiguration)'
-   
+  env:
+      ASPNETCORE_ENVIRONMENT: 'Development'  # Apply environment variable
 - task: DotNetCoreCLI@2
   name: 'buildArtifact'
   inputs:
