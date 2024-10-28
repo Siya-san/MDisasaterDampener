@@ -14,7 +14,7 @@ pool:
 variables:
   solution: '**/MDisasaterDampener.sln'
   project: '**/MDisasaterDampener.csproj'
-  tests: '**/MDisasaterDampener.Test..csproj'
+  tests: '**/MDisasaterDampenerTest.csproj'
   buildConfiguration: 'Release'
 steps:
   
