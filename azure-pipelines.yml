@@ -1,52 +1,48 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
-
 trigger:
   - master
-
 
 pool:
   name: 'Azure Pipelines'
 
-
 variables:
   solution: '**/MDisasaterDampener.sln'
   project: '**/MDisasaterDampener.csproj'
-  tests: '**/MDisasaterDampener.Test..csproj'
+  tests: '**/MDisasaterDampener.Test/*.csproj'  # Updated path
   buildConfiguration: 'Release'
+
 steps:
-  
+- task: UseDotNet@2
+  inputs:
+    packageType: 'sdk'
+    version: '5.0.x'  # Explicit .NET SDK version
+
 - task: NuGetToolInstaller@1
-  name: 'NuGetInstaller'
-- task: NuGetCommand@2
-  name: 'RestoreNuget'
+  displayName: 'Install NuGet'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Restore NuGet Packages'
   inputs:
     command: 'restore'
-    restoreSolution: '$(solution)'
-    feedsToUse: 'select'
+    projects: '$(solution)'
+
 - task: DotNetCoreCLI@2
-  name: 'UnitTests'
+  displayName: 'Build Solution'
+  inputs:
+    command: 'build'
+    projects: '$(solution)'
+    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
+
+- task: DotNetCoreCLI@2
+  displayName: 'Run Unit Tests'
   inputs:
     command: 'test'
     projects: '$(tests)'
     arguments: '--configuration $(buildConfiguration)'
-
-- task: DotNetCoreCLI@2
-  name: 'buildArtifact'
-  inputs:
-    command: 'build'
-    publishWebProjects: false
-    projects: '$(project)'
-    arguments: '--configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory)'
-
-    zipAfterPublish: true
+    publishTestResults: true
 
 - task: PublishBuildArtifacts@1
-  name: 'publishArtifact'
+  displayName: 'Publish Build Artifacts'
   inputs:
     PathtoPublish: '$(Build.ArtifactStagingDirectory)'
     ArtifactName: 'mddArtifact'
     publishLocation: 'Container'
-
