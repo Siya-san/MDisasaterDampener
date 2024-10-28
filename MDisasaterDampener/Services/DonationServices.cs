@@ -66,9 +66,9 @@ namespace MDisasaterDampener.Services
 
                         Item_Name = reader["Item_Name"].ToString(),
                         Description_and_inner_units = reader["Description_and_inner_units"].ToString(),
-                        Expiry = DateOnly.ParseExact(reader["Expiry"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Expiry = reader["Expiry"].ToString(),
                         Weight = reader["Weight"].ToString(),
-                        Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Donation_Date = reader["Donation_Date"].ToString(),
                         RE_Id = new ReliefEffortViewModel
                         {
                             Id = Convert.ToInt32(reader["ReliefEffortId"]),
@@ -134,9 +134,9 @@ namespace MDisasaterDampener.Services
                         MD_Id = int.Parse(reader["MD_Id"].ToString()),
 
                         Description = reader["Description"].ToString(),
-                        Expiry = DateOnly.ParseExact(reader["Expiry"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Expiry = reader["Expiry"].ToString(),
                         Unit_Type = Convert.ToInt32(reader["Unit_Type"]),
-                        Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Donation_Date = reader["Donation_Date"].ToString(),
                         RE_Id = new ReliefEffortViewModel
                         {
                             Id = Convert.ToInt32(reader["ReliefEffortId"]),
@@ -205,7 +205,7 @@ namespace MDisasaterDampener.Services
                         Item_Description = reader["Item_Description"].ToString(),
                         Material = reader["Material"].ToString(),
                         Quantity = Convert.ToInt32(reader["Quantity"]),
-                        Donation_Date = DateOnly.ParseExact(reader["Donation_Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Donation_Date = reader["Donation_Date"].ToString(),
                         RE_Id = new ReliefEffortViewModel
                         {
                             Id = Convert.ToInt32(reader["ReliefEffortId"]),

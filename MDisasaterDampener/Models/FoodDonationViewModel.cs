@@ -9,9 +9,9 @@
 
         public string? Item_Name { get; set; }
         public string? Description_and_inner_units { get; set; }
-        public DateOnly Expiry { get; set; }
+        public string? Expiry { get; set; }
         public string? Weight { get; set; }
-        public DateOnly Donation_Date { get; set; }
+        public string? Donation_Date { get; set; }
         public ReliefEffortViewModel RE_Id { get; set; }
         public List<ReliefEffortViewModel> reliefEfforts { get; set; }
         public List<FoodDonationViewModel> foodDonations { get; set; }
@@ -29,7 +29,9 @@
         public FoodDonationViewModel()
         {
             RE_Id = new ReliefEffortViewModel();
-            Expiry = DateOnly.FromDateTime(DateTime.Now);
+#pragma warning disable CA1305 // Specify IFormatProvider
+            Expiry = DateOnly.FromDateTime(DateTime.Now).ToString();
+#pragma warning restore CA1305 // Specify IFormatProvider
             reliefEfforts = [];
             foodDonations = [];
         }

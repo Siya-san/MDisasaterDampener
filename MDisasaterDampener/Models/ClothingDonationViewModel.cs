@@ -9,7 +9,7 @@
         public string? Item_Description { get; set; }
         public int Quantity { get; set; }
         public string? Material { get; set; }
-        public DateOnly Donation_Date { get; set; }
+        public string? Donation_Date { get; set; }
         public ReliefEffortViewModel RE_Id { get; set; }
 
         public List<ReliefEffortViewModel> reliefEfforts { get; set; }

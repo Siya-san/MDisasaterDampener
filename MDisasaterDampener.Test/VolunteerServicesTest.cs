@@ -26,7 +26,7 @@ namespace MDisasaterDampener.Test_
             var volunteerRequest = new VolunteerRequestViewModel
             {
                 Number_Volunteers = 10,
-                Date = DateOnly.FromDateTime(DateTime.Now),
+                Date = DateOnly.FromDateTime(DateTime.Now).ToString(),
                 Description = "Test Description",
                 Rid = new ReliefEffortViewModel { Id = 1 }
             };

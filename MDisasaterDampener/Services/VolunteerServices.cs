@@ -58,7 +58,7 @@ namespace MDisasaterDampener.Services
                 {
                     volunteerRequest.Id = Convert.ToInt32(reader["Id"]);
                     volunteerRequest.Number_Volunteers = Convert.ToInt32(reader["Number_Volunteers"]);
-                    volunteerRequest.Date = DateOnly.ParseExact(reader["Date"].ToString().Split(' ')[0], "yyyy/MM/dd");
+                    volunteerRequest.Date = reader["Date"].ToString();
                     volunteerRequest.Description = reader["Description"].ToString();
 
                     volunteerRequest.Rid = new ReliefEffortViewModel
@@ -100,7 +100,7 @@ namespace MDisasaterDampener.Services
                     {
                         Id = int.Parse(reader["Id"].ToString()),
                         Number_Volunteers = int.Parse(reader["Number_Volunteers"].ToString()),
-                        Date = DateOnly.ParseExact(reader["Date"].ToString().Split(' ')[0], "yyyy/MM/dd"),
+                        Date = reader["Date"].ToString(),
                         Description = reader["Description"].ToString(),
                         Rid = new ReliefEffortViewModel
                         {

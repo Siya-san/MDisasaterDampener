@@ -34,7 +34,7 @@ namespace MDisasaterDampener.Test_
                 Category = FoodDonationViewModel.Categories.Grains,
                 Item_Name = "Rice",
                 Description_and_inner_units = "1kg Packets",
-                Expiry = DateOnly.FromDateTime(DateTime.Now.AddMonths(6)),
+                Expiry = DateOnly.FromDateTime(DateTime.Now.AddMonths(6)).ToString(),
                 Weight = "10kg",
                 RE_Id = new ReliefEffortViewModel { Id = 1 }
             };
