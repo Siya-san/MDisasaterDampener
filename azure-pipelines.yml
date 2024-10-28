@@ -19,11 +19,12 @@ steps:
 - task: NuGetToolInstaller@1
   displayName: 'Install NuGet'
 
-- task: DotNetCoreCLI@2
-  displayName: 'Restore NuGet Packages'
+- task: NuGetCommand@2
+  name: 'RestoreNuget'
   inputs:
     command: 'restore'
-    projects: '$(solution)'
+    restoreSolution: '$(solution)'
+    feedsToUse: 'select'
 
 - task: DotNetCoreCLI@2
   displayName: 'Build Solution'
