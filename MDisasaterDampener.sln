@@ -5,7 +5,7 @@ VisualStudioVersion = 17.8.34511.84
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MDisasaterDampener", "MDisasaterDampener\MDisasaterDampener.csproj", "{F4EF0D8D-142B-4EAF-B463-65EDD4AE8067}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MDisasaterDampener.Test.", "MDisasaterDampener.Test\MDisasaterDampener.Test..csproj", "{1F7B2D71-8E16-468A-8D65-2FF1627E4DF2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MDisasaterDampenerTest", "MDisasaterDampener.Test\MDisasaterDampenerTest.csproj", "{1F7B2D71-8E16-468A-8D65-2FF1627E4DF2}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{37EEB027-0F4B-4C03-BBD1-93F446DFA115}"
 	ProjectSection(SolutionItems) = preProject
