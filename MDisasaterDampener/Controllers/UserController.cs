@@ -24,16 +24,11 @@ namespace MDisasaterDampener.Controllers
             UserViewModel user = new();
             if (userServices.Login(returningUser) != null)
             {
-                try
-                {
-                    DefaultHttpContext httpContext = new();
-                    httpContext.Session.SetString("Current_User", JsonConvert.SerializeObject(userServices.Login(returningUser)));
 
-                }
-                catch
-                {
+                
+                HttpContext.Session.SetString("Current_User", JsonConvert.SerializeObject(userServices.Login(returningUser)));
 
-                }
+
 
 
 
