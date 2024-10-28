@@ -31,7 +31,7 @@ namespace MDisasaterDampener.Services
             _ = command.Parameters.AddWithValue("@Description_and_inner_units", foodDonation.Description_and_inner_units);
             _ = command.Parameters.AddWithValue("@Expiry", foodDonation.Expiry);
             _ = command.Parameters.AddWithValue("@Weight", foodDonation.Weight);
-            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
+            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now)).ToString();
             _ = command.Parameters.AddWithValue("@RE_Id", foodDonation.RE_Id.Id);
 
             _ = command.ExecuteNonQuery();
@@ -100,7 +100,7 @@ namespace MDisasaterDampener.Services
             _ = command.Parameters.AddWithValue("@Description", donation.Description);
             _ = command.Parameters.AddWithValue("@Expiry", donation.Expiry);
             _ = command.Parameters.AddWithValue("@Unit_Type", donation.Unit_Type);
-            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
+            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now)).ToString();
             _ = command.Parameters.AddWithValue("@RE_Id", donation.RE_Id.Id);
 
             _ = command.ExecuteNonQuery();
@@ -169,7 +169,7 @@ namespace MDisasaterDampener.Services
             _ = command.Parameters.AddWithValue("@Description", donation.Item_Description);
             _ = command.Parameters.AddWithValue("@Quantity", donation.Quantity);
             _ = command.Parameters.AddWithValue("@Material", donation.Material);
-            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now));
+            _ = command.Parameters.AddWithValue("@Donation_Date", DateOnly.FromDateTime(DateTime.Now)).ToString();
             _ = command.Parameters.AddWithValue("@RE_Id", donation.RE_Id.Id);
 
             _ = command.ExecuteNonQuery();
